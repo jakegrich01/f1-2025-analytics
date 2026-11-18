@@ -1,73 +1,1110 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>F1 2025 Analytics</title>
-  <link rel="stylesheet" href="styles.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>F1 2025 Analytics</title>
+<style>
+
+:root{
+  --bg:#f6f6f7;--panel:#ffffff;--panel2:#fafafa;--line:#dedee2;
+  --text:#171719;--muted:#6f737b;--red:#d71920;--red-dark:#b11218;
+  --red-soft:#fff0f1;--green:#138a55;--gold:#b97a00
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:
+    radial-gradient(circle at 88% 0,rgba(215,25,32,.08),transparent 28rem),
+    var(--bg);
+  color:var(--text);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif
+}
+button,select,input{font:inherit}
+button,select{min-height:42px}
+.wrap{width:min(1180px,calc(100% - 34px));margin:auto}
+.topbar{
+  position:sticky;top:0;z-index:50;background:rgba(255,255,255,.96);
+  backdrop-filter:blur(14px);border-bottom:1px solid var(--line)
+}
+.nav{min-height:68px;display:flex;align-items:center;gap:20px;justify-content:space-between}
+.brand{
+  display:flex;align-items:center;gap:10px;color:var(--text);text-decoration:none;
+  font-weight:950;white-space:nowrap
+}
+.navlinks{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+.navbtn{
+  color:var(--muted);background:transparent;border:0;padding:9px 10px;border-radius:9px;
+  cursor:pointer;font-weight:750;font-size:.84rem
+}
+.navbtn:hover{color:var(--red);background:var(--red-soft)}
+.navbtn.active{color:#fff;background:var(--red)}
+.page{display:none;padding:38px 0 50px}
+.page.active{display:block}
+.hero{
+  min-height:310px;padding:45px 0 34px;display:grid;grid-template-columns:1.25fr .75fr;
+  gap:36px;align-items:end
+}
+.eyebrow{
+  margin:0 0 10px;color:var(--red);font-size:.72rem;font-weight:950;
+  letter-spacing:.15em;text-transform:uppercase
+}
+h1{font-size:clamp(3.3rem,7vw,6.6rem);line-height:.9;letter-spacing:-.065em;margin:0 0 20px}
+h2{font-size:clamp(1.8rem,3vw,2.7rem);letter-spacing:-.045em;margin:0}
+h3{margin:0;font-size:1.15rem}
+p{color:var(--muted);line-height:1.6}
+.lede{font-size:1.02rem;max-width:700px}
+.hero-side{
+  border:1px solid var(--line);border-top:4px solid var(--red);border-radius:20px;
+  background:#fff;padding:22px;box-shadow:0 12px 32px rgba(20,20,20,.05)
+}
+.hero-side strong{display:block;font-size:2rem;margin-top:6px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:0 0 36px}
+.kpi,.stat{
+  border:1px solid var(--line);background:var(--panel);border-radius:16px;padding:19px;
+  box-shadow:0 8px 25px rgba(20,20,20,.035)
+}
+.kpi span,.stat span{
+  display:block;color:var(--muted);font-size:.72rem;text-transform:uppercase;
+  letter-spacing:.08em;font-weight:850
+}
+.kpi strong,.stat strong{display:block;font-size:1.9rem;margin-top:7px;letter-spacing:-.035em}
+.section{padding:20px 0 32px}
+.section-head{
+  display:flex;justify-content:space-between;align-items:end;gap:18px;margin-bottom:18px
+}
+.panel{
+  background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:22px;
+  box-shadow:0 14px 38px rgba(20,20,20,.05)
+}
+.controls{display:flex;gap:12px;align-items:end;flex-wrap:wrap}
+.control{display:grid;gap:7px;min-width:220px;flex:1}
+.control label{
+  color:var(--muted);font-size:.72rem;font-weight:850;text-transform:uppercase;letter-spacing:.07em
+}
+select{
+  width:100%;background:#fff;color:var(--text);border:1px solid #cfcfd4;
+  border-radius:11px;padding:11px 13px;outline:none
+}
+select:focus,button:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+.state{padding:34px;text-align:center;color:var(--muted)}
+.error{color:var(--red)}
+.btn{
+  border:1px solid #cfcfd4;background:#fff;color:var(--text);border-radius:10px;
+  padding:10px 13px;cursor:pointer;font-weight:800
+}
+.btn:hover{border-color:var(--red);color:var(--red);background:var(--red-soft)}
+.btn.red{background:var(--red);border-color:var(--red);color:#fff}
+.btn.red:hover{background:var(--red-dark);color:#fff}
+.profile-grid{display:grid;grid-template-columns:310px 1fr;gap:18px}
+.profile-card{
+  border:1px solid var(--line);background:var(--panel);border-radius:18px;overflow:hidden;
+  box-shadow:0 10px 28px rgba(20,20,20,.04)
+}
+.profile-card img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;background:#f1f1f2}
+.profile-info{padding:18px;border-top:3px solid var(--red)}
+.profile-info h2{font-size:2rem}
+.driver-meta{color:var(--muted);margin-top:7px}
+.driver-num{color:var(--red);font-weight:950}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;align-content:start}
+.stat strong{font-size:1.45rem}
+.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:14px;background:#fff}
+table{width:100%;border-collapse:collapse;min-width:820px}
+th,td{padding:12px 13px;border-bottom:1px solid #ececef;text-align:left}
+th{
+  font-size:.68rem;color:#646870;text-transform:uppercase;letter-spacing:.07em;
+  background:#f4f4f5;position:sticky;top:0;z-index:1
+}
+td{font-size:.86rem}
+tbody tr:hover{background:#fff7f7}
+.right{text-align:right;font-variant-numeric:tabular-nums}
+.rank{color:#83878f;width:55px}
+.person{display:flex;align-items:center;gap:10px;font-weight:850}
+.mini{width:36px;height:36px;border-radius:9px;object-fit:cover;border:1px solid var(--line)}
+.pill{
+  display:inline-block;border:1px solid #d8d8dc;background:#f7f7f8;border-radius:999px;
+  padding:4px 8px;color:#555a62;font-size:.72rem;font-weight:750
+}
+.compare-selects{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;align-items:end;margin-bottom:18px}
+.vs{padding-bottom:13px;color:var(--red);font-size:.78rem;font-weight:950}
+.comparison{display:grid;grid-template-columns:.86fr 1.28fr .86fr;gap:16px}
+.driver-card,.metrics{
+  background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;
+  box-shadow:0 8px 24px rgba(20,20,20,.035)
+}
+.driver-card img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;background:#f1f1f2}
+.bio{padding:16px;border-top:3px solid var(--red)}
+.bio b{display:block;font-size:1.16rem;margin-bottom:4px}
+.bio small{color:var(--muted);line-height:1.55}
+.metrics{padding:8px 18px;display:grid;align-content:center}
+.metric-row{
+  display:grid;grid-template-columns:90px 1fr 90px;gap:10px;align-items:center;
+  padding:11px 0;border-bottom:1px solid #ededf0
+}
+.metric-row:last-child{border-bottom:0}
+.metric-label{text-align:center;color:var(--muted);font-size:.76rem}
+.metric-value{font-size:1.02rem;font-weight:900}.metric-value.left{text-align:right}
+.winner{color:var(--green)}
+.tabs{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.tab{
+  cursor:pointer;border:1px solid #cfcfd4;background:#fff;color:var(--muted);
+  padding:9px 12px;border-radius:9px;font-weight:850
+}
+.tab:hover{border-color:var(--red);color:var(--red)}
+.tab.active{color:#fff;border-color:var(--red);background:var(--red)}
+.race-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}
+.race-summary .stat{padding:15px}
+.race-summary .stat strong{font-size:1.15rem}
+.graph-mode-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.graph-layout{display:grid;grid-template-columns:250px 1fr;gap:18px}
+.driver-picker{
+  border:1px solid var(--line);border-radius:16px;background:#fff;padding:14px;
+  max-height:520px;overflow:auto
+}
+.pick-row{
+  display:flex;align-items:center;gap:9px;padding:8px;border-radius:9px;color:#34363b;font-size:.83rem
+}
+.pick-row:hover{background:var(--red-soft)}
+.pick-row input{width:17px;height:17px;accent-color:var(--red)}
+.chart-panel{border:1px solid var(--line);border-radius:16px;background:#fff;padding:14px;overflow:auto}
+#standingChart{width:100%;min-width:720px;height:auto;display:block}
+.legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+.legend-item{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:.78rem}
+.legend-swatch{width:22px;height:3px;border-radius:99px}
+.chart-note{color:var(--muted);font-size:.78rem;margin:0 0 12px}
+.chart-tooltip{
+  position:fixed;pointer-events:none;background:#1f2023;color:#fff;border:1px solid #383a40;
+  border-radius:9px;padding:8px 10px;font-size:.76rem;box-shadow:0 10px 30px rgba(0,0,0,.20);
+  display:none;z-index:99
+}
+.footer{padding:30px 0 55px;color:#7b7f86;font-size:.8rem;display:flex;justify-content:space-between;gap:20px}
+.empty{padding:26px;text-align:center;color:var(--muted)}
+
+
+@media(max-width:720px){
+  }
+
+.compare-chart-wrap{
+  margin-top:18px;border:1px solid var(--line);border-radius:16px;background:#fff;padding:16px;overflow:auto
+}
+.compare-chart-head{
+  display:flex;justify-content:space-between;align-items:flex-end;gap:14px;flex-wrap:wrap;margin-bottom:8px
+}
+.compare-chart-head h3{font-size:1.08rem}
+.compare-chart-head p{margin:3px 0 0;font-size:.78rem}
+#comparePointsChart{width:100%;min-width:760px;height:auto;display:block}
+.compare-legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px}
+.compare-legend-item{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:.78rem}
+
+.header-logo{
+  width:46px;
+  height:30px;
+  object-fit:contain;
+  display:block
+}
+@media(max-width:720px){
+  .header-logo{
+  width:46px;
+  height:30px;
+  object-fit:contain;
+  display:block
+}
+}
+
+
+.overview-simple{
+  min-height:calc(100vh - 150px);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  text-align:center;
+  padding:72px 0 70px;
+}
+.overview-simple h1{
+  margin:0;
+  font-size:clamp(3rem,6vw,5.8rem);
+  line-height:.95;
+  letter-spacing:-.06em;
+}
+.overview-logo-simple{
+  width:min(420px,82vw);
+  height:auto;
+  object-fit:contain;
+  display:block;
+  margin:34px auto 22px;
+}
+.overview-lede-simple{
+  max-width:650px;
+  margin:0 auto;
+  font-size:1rem;
+  color:var(--muted);
+}
+.overview-actions{
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:34px;
+}
+.overview-action{
+  border:1px solid #d2d2d6;
+  background:#fff;
+  color:var(--text);
+  border-radius:10px;
+  padding:11px 18px;
+  min-width:120px;
+  cursor:pointer;
+  font-weight:850;
+  transition:background .15s ease,color .15s ease,border-color .15s ease;
+}
+.overview-action:hover{
+  background:var(--red);
+  border-color:var(--red);
+  color:#fff;
+}
+.overview-action:focus-visible{
+  outline:2px solid var(--red);
+  outline-offset:2px;
+}
+
+@media(max-width:950px){
+  .nav{align-items:flex-start;padding:12px 0;flex-direction:column}
+  .navlinks{justify-content:flex-start}.hero{grid-template-columns:1fr}.profile-grid,.graph-layout{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}.race-summary{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:720px){
+  .wrap{width:min(100% - 20px,1180px)}.kpis{grid-template-columns:repeat(2,1fr)}
+  .compare-selects{grid-template-columns:1fr}.vs{text-align:center;padding:0}
+  .comparison{grid-template-columns:1fr}.metrics{grid-row:auto}.profile-grid{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}.navlinks{gap:2px}
+  .navbtn{padding:8px;font-size:.78rem}}
+@media(max-width:480px){
+  .kpis,.stats-grid,.race-summary{grid-template-columns:1fr}.footer{flex-direction:column}
+}
+
+
+@media(max-width:600px){
+  .overview-simple{padding-top:48px}
+  .overview-logo-simple{width:min(330px,90vw);margin-top:28px}
+  .overview-actions{display:grid;grid-template-columns:1fr 1fr;width:100%;max-width:360px}
+  .overview-action{min-width:0}
+}
+
+</style>
 </head>
 <body>
 <header class="topbar">
   <div class="wrap nav">
-    <a class="brand" href="#overview"><span class="mark"></span>F1 2025 Analytics</a>
-    <nav><a href="#overview">Overview</a><a href="#compare">Compare</a><a href="#standings">Standings</a></nav>
+    <a class="brand" href="#overview" data-page-link="overview"><img class="header-logo" src="data:image/png;base64,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" alt="Formula 1 logo">F1 2025 Analytics</a>
+    <nav class="navlinks" aria-label="Main navigation">
+      <button class="navbtn active" data-page="overview">Overview</button>
+      <button class="navbtn" data-page="compare">Compare</button>
+      <button class="navbtn" data-page="drivers">Drivers</button>
+      <button class="navbtn" data-page="races">Races</button>
+      <button class="navbtn" data-page="graph">Standings Graph</button>
+      <button class="navbtn" data-page="standings">Standings</button>
+    </nav>
   </div>
 </header>
 
 <main class="wrap">
-  <section class="hero" id="overview">
-    <div>
-      <p class="eyebrow">ACC 556 Final Project</p>
-      <h1>2025 F1<br>Analytics</h1>
-      <p class="lede">Explore the 2025 Formula 1 season using live data from a normalized Supabase database.</p>
-    </div>
-    <div class="live"><span id="dot" class="dot"></span><span id="status">Connecting to Supabase…</span></div>
-  </section>
 
-  <section class="kpis">
-    <article><span>Drivers</span><strong id="kDrivers">—</strong></article>
-    <article><span>Races</span><strong>24</strong></article>
-    <article><span>Teams</span><strong id="kTeams">—</strong></article>
-    <article><span>Champion</span><strong id="kChampion">—</strong></article>
-  </section>
+<section id="page-overview" class="page active">
+  <section class="overview-simple">
+    <h1>2025 F1 Analytics</h1>
 
-  <section class="section" id="compare">
-    <div class="section-head">
-      <div><p class="eyebrow">Phase 1 Win Condition</p><h2>Compare Two Drivers</h2></div>
+    <img class="overview-logo-simple" src="data:image/png;base64,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" alt="Formula 1 logo">
+
+    <p class="overview-lede-simple">
+      Explore drivers, races, comparisons, and championship progression from the 2025 Formula 1 season.
+    </p>
+
+    <div class="overview-actions" aria-label="Explore the season">
+      <button class="overview-action" data-jump="drivers">Drivers</button>
+      <button class="overview-action" data-jump="races">Races</button>
+      <button class="overview-action" data-jump="compare">Compare</button>
+      <button class="overview-action" data-jump="graph">Standings Graph</button>
     </div>
-    <div class="panel">
-      <div class="selectors">
-        <label>Driver One<select id="driverOne"></select></label>
-        <div class="vs">VS</div>
-        <label>Driver Two<select id="driverTwo"></select></label>
-      </div>
-      <div id="compareLoading" class="state">Loading driver statistics…</div>
-      <div id="comparison" class="comparison" hidden>
+  </section>
+</section>
+
+<section id="page-compare" class="page">
+  <div class="section-head">
+    <div><p class="eyebrow">Phase 1 Win Condition</p><h2>Compare Two Drivers</h2></div>
+  </div>
+
+  <div class="panel">
+    <div class="compare-selects">
+      <div class="control"><label for="driverOne">Driver One</label><select id="driverOne"></select></div>
+      <div class="vs">VS</div>
+      <div class="control"><label for="driverTwo">Driver Two</label><select id="driverTwo"></select></div>
+    </div>
+
+    <div id="compareLoading" class="state">Loading driver comparison…</div>
+
+    <div id="comparison" hidden>
+      <div class="comparison">
         <article id="cardOne" class="driver-card"></article>
         <div id="metrics" class="metrics"></div>
         <article id="cardTwo" class="driver-card"></article>
       </div>
+<div class="compare-chart-wrap">
+        <div class="compare-chart-head">
+          <div>
+            <p class="eyebrow">Race-by-Race</p>
+            <h3>Championship Points Progression</h3>
+            <p>Cumulative points after each round. Changing either driver updates the chart automatically.</p>
+          </div>
+        </div>
+        <svg id="comparePointsChart" viewBox="0 0 920 430" role="img" aria-label="Cumulative championship points comparison by round"></svg>
+        <div id="compareChartLegend" class="compare-legend"></div>
+      </div>
+</div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <section class="section" id="standings">
-    <div class="section-head"><div><p class="eyebrow">Season Reports</p><h2>Championship Standings</h2></div></div>
-    <div class="tabs">
-      <button id="driverTab" class="tab active">Drivers</button>
-      <button id="teamTab" class="tab">Teams</button>
+<section id="page-drivers" class="page">
+  <div class="section-head">
+    <div><p class="eyebrow">Driver Profiles</p><h2>Driver Season Profile</h2></div>
+  </div>
+  <div class="panel">
+    <div class="controls">
+      <div class="control"><label for="profileDriver">Choose Driver</label><select id="profileDriver"></select></div>
     </div>
-    <div class="panel table-panel">
+  </div>
+  <div id="profileLoading" class="state">Choose a driver to load the profile.</div>
+  <div id="profileContent" hidden>
+    <section class="section">
+      <div class="profile-grid">
+        <article id="profileCard" class="profile-card"></article>
+        <div id="profileStats" class="stats-grid"></div>
+      </div>
+    </section>
+    <section class="section">
+      <div class="section-head">
+        <div><p class="eyebrow">Race-by-Race</p><h2>Season Results</h2></div>
+      </div>
       <div class="table-wrap">
         <table>
-          <thead id="tableHead"></thead>
-          <tbody id="tableBody"><tr><td class="state">Loading standings…</td></tr></tbody>
+          <thead>
+            <tr>
+              <th>Rd</th><th>Grand Prix</th><th>Team</th><th class="right">Qual.</th>
+              <th class="right">Start</th><th class="right">Finish</th><th class="right">Race Pts</th>
+              <th class="right">Sprint Pts</th><th class="right">Weekend</th><th class="right">+/-</th>
+            </tr>
+          </thead>
+          <tbody id="profileRaceBody"></tbody>
         </table>
       </div>
+    </section>
+  </div>
+</section>
+
+<section id="page-races" class="page">
+  <div class="section-head">
+    <div><p class="eyebrow">Race Explorer</p><h2>Explore Any Grand Prix</h2></div>
+  </div>
+  <div class="panel">
+    <div class="controls">
+      <div class="control"><label for="raceSelect">Choose Race</label><select id="raceSelect"></select></div>
     </div>
-  </section>
+  </div>
+  <div id="raceLoading" class="state">Choose a race to load results.</div>
+  <div id="raceContent" hidden>
+    <section class="section">
+      <div id="raceTitle"></div>
+      <div id="raceSummary" class="race-summary"></div>
+    </section>
+    <section class="section">
+      <div class="section-head"><div><p class="eyebrow">Classification</p><h2>Race Results</h2></div></div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Pos.</th><th>Driver</th><th>Team</th><th class="right">Qual.</th>
+              <th class="right">Start</th><th class="right">Points</th><th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="raceResultBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</section>
+
+<section id="page-graph" class="page">
+  <div class="section-head">
+    <div><p class="eyebrow">Championship Progression</p><h2>Driver Season Progression</h2></div>
+  </div>
+  <div class="panel">
+    <div class="graph-mode-tabs">
+      <button id="positionGraphBtn" class="tab active">Standing Position</button>
+      <button id="pointsGraphBtn" class="tab">Championship Points</button>
+    </div>
+    <p id="graphDescription" class="chart-note">Select up to five drivers. Position 1 is at the top. Tied drivers share the same position because the graph ranks cumulative championship points.</p>
+    <div class="graph-layout">
+      <div>
+        <div class="controls" style="margin-bottom:12px">
+          <button id="top3Btn" class="btn">Top 3</button>
+          <button id="clearGraphBtn" class="btn">Clear</button>
+        </div>
+        <div id="driverPicker" class="driver-picker"></div>
+      </div>
+      <div class="chart-panel">
+        <svg id="standingChart" viewBox="0 0 900 520" role="img" aria-label="Driver championship progression by round"></svg>
+        <div id="chartLegend" class="legend"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="page-standings" class="page">
+  <div class="section-head">
+    <div><p class="eyebrow">Season Reports</p><h2>Championship Standings</h2></div>
+  </div>
+  <div class="tabs">
+    <button id="driverTab" class="tab active">Drivers</button>
+    <button id="teamTab" class="tab">Teams</button>
+  </div>
+  <div class="panel" style="padding:0">
+    <div class="table-wrap" style="border:0">
+      <table>
+        <thead id="tableHead"></thead>
+        <tbody id="tableBody"><tr><td class="state">Loading standings…</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
 </main>
 
+<div id="chartTooltip" class="chart-tooltip"></div>
+
 <footer class="wrap footer"><span>F1 2025 Driver Analytics · ACC 556</span><span>Powered by Supabase</span></footer>
-<script src="app.js"></script>
+
+<script>
+const SUPABASE_URL="https://jevbmrsxufqjisflvhnk.supabase.co";
+const SUPABASE_KEY="sb_publishable_1ExPrvufP_ViDYOwezzIaQ_Aymqu-n6";
+
+let drivers=[],teams=[],races=[],progression=[];
+let standingsMode="drivers";
+let compareHistories={};
+let raceLengthRows=null;
+let graphMode="position";
+let selectedGraphDrivers=new Set();
+
+const $=id=>document.getElementById(id);
+const fmt=(v,d=0)=>v==null?"—":Number(v).toLocaleString(undefined,{minimumFractionDigits:d,maximumFractionDigits:d});
+const fullName=d=>`${d.first_name} ${d.last_name}`;
+
+async function api(resource,query=""){
+  const url=`${SUPABASE_URL}/rest/v1/${resource}${query?`?${query}`:""}`;
+  const res=await fetch(url,{headers:{apikey:SUPABASE_KEY}});
+  if(!res.ok){
+    const msg=await res.text().catch(()=> "");
+    throw new Error(`${resource}: ${res.status} ${msg}`);
+  }
+  return res.json();
+}
+
+function setConnection(ok){}
+
+function showPage(name){
+  document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id===`page-${name}`));
+  document.querySelectorAll(".navbtn").forEach(b=>b.classList.toggle("active",b.dataset.page===name));
+  location.hash=name;
+  window.scrollTo({top:0,behavior:"smooth"});
+  if(name==="graph") requestAnimationFrame(drawStandingChart);
+}
+
+document.querySelectorAll(".navbtn").forEach(btn=>btn.addEventListener("click",()=>showPage(btn.dataset.page)));
+document.querySelectorAll("[data-jump]").forEach(btn=>btn.addEventListener("click",()=>showPage(btn.dataset.jump)));
+document.querySelector("[data-page-link]").addEventListener("click",e=>{e.preventDefault();showPage("overview")});
+
+function populateDriverSelect(select){
+  select.innerHTML=[...drivers].sort((a,b)=>fullName(a).localeCompare(fullName(b)))
+    .map(d=>`<option value="${d.driver_id}">${fullName(d)}</option>`).join("");
+}
+
+function driverCard(d){
+  return `<img src="${d.image_url||""}" alt="${fullName(d)}">
+  <div class="bio"><b>${fullName(d)}</b><small><span class="driver-num">#${d.driver_number}</span> · ${d.nationality||"—"}<br>${d.team_name||"—"}</small></div>`;
+}
+
+const compareMetrics=[
+  ["Total Points","total_points",0,true],
+  ["Wins","wins",0,true],
+  ["Podiums","podiums",0,true],
+  ["Avg Finish","avg_finish",2,false],
+  ["Avg Qualifying","avg_qualifying",2,false]
+];
+
+function shortRaceName(name){
+  return String(name||"")
+    .replace(" Grand Prix","")
+    .replace("Saudi Arabian","Saudi")
+    .replace("Emilia-Romagna","Imola")
+    .replace("United States","USA")
+    .replace("Las Vegas","Vegas")
+    .slice(0,12);
+}
+
+function comparisonDrivers(){
+  const a=drivers.find(d=>String(d.driver_id)===$("driverOne").value);
+  const b=drivers.find(d=>String(d.driver_id)===$("driverTwo").value);
+  return [a,b];
+}
+
+function drawComparePointsChart(a,b){
+  const svg=$("comparePointsChart");
+  if(!a||!b)return;
+
+  const series=[
+    {driver:a,color:"#d71920"},
+    {driver:b,color:"#2563eb"}
+  ];
+
+  const W=920,H=430,L=64,R=24,T=28,B=62;
+  const plotW=W-L-R,plotH=H-T-B;
+  const maxRound=Math.max(1,...races.map(r=>Number(r.round_number)||0),...progression.map(r=>Number(r.round_number)||0));
+  const rowsFor=id=>progression
+    .filter(r=>String(r.driver_id)===String(id))
+    .sort((x,y)=>Number(x.round_number)-Number(y.round_number));
+
+  const allRows=[...rowsFor(a.driver_id),...rowsFor(b.driver_id)];
+  const maxPoints=Math.max(50,...allRows.map(r=>Number(r.cumulative_points)||0));
+  const ceiling=Math.ceil(maxPoints/50)*50;
+  const step=Math.max(50,Math.ceil((ceiling/5)/50)*50);
+
+  const x=round=>L+((Number(round)-1)/Math.max(1,maxRound-1))*plotW;
+  const y=points=>T+plotH-(Number(points)/ceiling)*plotH;
+
+  let out=`<rect x="0" y="0" width="${W}" height="${H}" fill="#ffffff"/>`;
+
+  for(let value=0;value<=ceiling;value+=step){
+    const yy=y(value);
+    out+=`<line x1="${L}" y1="${yy}" x2="${W-R}" y2="${yy}" stroke="#e5e5e8" stroke-width="1"/>
+      <text x="${L-10}" y="${yy+4}" text-anchor="end" fill="#777b83" font-size="11">${value}</text>`;
+  }
+
+  races.forEach(race=>{
+    const round=Number(race.round_number);
+    const xx=x(round);
+    if(round===1||round%2===0||round===maxRound){
+      out+=`<line x1="${xx}" y1="${T}" x2="${xx}" y2="${H-B}" stroke="#f2f2f4" stroke-width="1"/>
+        <text x="${xx}" y="${H-B+21}" text-anchor="middle" fill="#777b83" font-size="9">${shortRaceName(race.race_name)}</text>`;
+    }
+  });
+
+  out+=`<text x="${W/2}" y="${H-12}" text-anchor="middle" fill="#666a72" font-size="12">Grand Prix</text>
+    <text transform="translate(17 ${H/2}) rotate(-90)" text-anchor="middle" fill="#666a72" font-size="12">Cumulative Points</text>`;
+
+  const legend=[];
+  series.forEach(s=>{
+    const rows=rowsFor(s.driver.driver_id);
+    if(!rows.length)return;
+    const points=rows.map(r=>`${x(r.round_number)},${y(r.cumulative_points)}`).join(" ");
+    out+=`<polyline points="${points}" fill="none" stroke="${s.color}" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/>`;
+
+    rows.forEach(r=>{
+      out+=`<circle class="compare-chart-point"
+        data-driver="${fullName(s.driver)}"
+        data-round="${r.round_number}"
+        data-race="${r.race_name}"
+        data-points="${r.cumulative_points}"
+        data-standing="${r.standing_position}"
+        cx="${x(r.round_number)}"
+        cy="${y(r.cumulative_points)}"
+        r="4.5"
+        fill="${s.color}"
+        stroke="#ffffff"
+        stroke-width="2"/>`;
+    });
+
+    legend.push(`<div class="compare-legend-item"><span class="legend-swatch" style="background:${s.color}"></span>${fullName(s.driver)}</div>`);
+  });
+
+  svg.innerHTML=out;
+  $("compareChartLegend").innerHTML=legend.join("");
+
+  const tip=$("chartTooltip");
+  svg.querySelectorAll(".compare-chart-point").forEach(c=>{
+    c.addEventListener("mouseenter",()=>{
+      tip.innerHTML=`<b>${c.dataset.driver}</b><br>${c.dataset.race}<br>Points: ${fmt(c.dataset.points)}<br>Standing: P${c.dataset.standing}`;
+      tip.style.display="block";
+    });
+    c.addEventListener("mousemove",e=>{
+      tip.style.left=`${e.clientX+14}px`;
+      tip.style.top=`${e.clientY+14}px`;
+    });
+    c.addEventListener("mouseleave",()=>tip.style.display="none");
+  });
+}
+
+
+async function getRaceLengthRows(){
+  if(raceLengthRows)return raceLengthRows;
+
+  raceLengthRows=await api(
+    "race_explorer_results",
+    "select=race_id,race_name,number_of_laps,circuit_length_km,driver_id,finishing_position"
+  );
+
+  return raceLengthRows;
+}
+
+function buildRaceLengthCategories(rows){
+  const uniqueRaces=new Map();
+
+  rows.forEach(row=>{
+    const laps=Number(row.number_of_laps);
+    const circuitLength=Number(row.circuit_length_km);
+
+    if(!Number.isFinite(laps)||!Number.isFinite(circuitLength))return;
+
+    if(!uniqueRaces.has(String(row.race_id))){
+      uniqueRaces.set(String(row.race_id),{
+        race_id:String(row.race_id),
+        race_name:row.race_name,
+        distance:laps*circuitLength
+      });
+    }
+  });
+
+  const sorted=[...uniqueRaces.values()].sort((a,b)=>a.distance-b.distance);
+  const groupSize=Math.ceil(sorted.length/3);
+
+  const raceCategory=new Map();
+  const groups=[
+    {name:"Short",races:sorted.slice(0,groupSize)},
+    {name:"Medium",races:sorted.slice(groupSize,groupSize*2)},
+    {name:"Long",races:sorted.slice(groupSize*2)}
+  ];
+
+  groups.forEach(group=>{
+    group.races.forEach(r=>raceCategory.set(r.race_id,group.name));
+    group.min=group.races.length?Math.min(...group.races.map(r=>r.distance)):null;
+    group.max=group.races.length?Math.max(...group.races.map(r=>r.distance)):null;
+  });
+
+  return {groups,raceCategory};
+}
+
+function averageFinishByLength(rows,driverId,raceCategory){
+  const buckets={Short:[],Medium:[],Long:[]};
+
+  rows
+    .filter(row=>String(row.driver_id)===String(driverId))
+    .forEach(row=>{
+      const finish=Number(row.finishing_position);
+      const category=raceCategory.get(String(row.race_id));
+
+      if(category&&Number.isFinite(finish)){
+        buckets[category].push(finish);
+      }
+    });
+
+  const average=values=>{
+    if(!values.length)return null;
+    return values.reduce((sum,value)=>sum+value,0)/values.length;
+  };
+
+  return {
+    Short:average(buckets.Short),
+    Medium:average(buckets.Medium),
+    Long:average(buckets.Long)
+  };
+}
+
+async function getRaceLengthComparison(a,b){
+  const rows=await getRaceLengthRows();
+  const {groups,raceCategory}=buildRaceLengthCategories(rows);
+  const aStats=averageFinishByLength(rows,a.driver_id,raceCategory);
+  const bStats=averageFinishByLength(rows,b.driver_id,raceCategory);
+
+  return groups.map(group=>({
+    label:`${group.name} Race Avg`,
+    a:aStats[group.name],
+    b:bStats[group.name]
+  }));
+}
+
+async function renderComparison(){
+  const [a,b]=comparisonDrivers();
+  if(!a||!b)return;
+
+  $("compareLoading").hidden=false;
+  $("compareLoading").textContent="Loading driver comparison…";
+  $("comparison").hidden=true;
+
+  try{
+    $("cardOne").innerHTML=driverCard(a);
+    $("cardTwo").innerHTML=driverCard(b);
+
+    const baseMetricHtml=compareMetrics.map(([label,key,decimals,higher])=>{
+      const av=Number(a[key]),bv=Number(b[key]);
+      const valid=Number.isFinite(av)&&Number.isFinite(bv)&&av!==bv;
+      const aw=valid&&(higher?av>bv:av<bv);
+      const bw=valid&&(higher?bv>av:bv<av);
+      return `<div class="metric-row">
+        <div class="metric-value left ${aw?"winner":""}">${fmt(a[key],decimals)}</div>
+        <div class="metric-label">${label}</div>
+        <div class="metric-value ${bw?"winner":""}">${fmt(b[key],decimals)}</div>
+      </div>`;
+    }).join("");
+
+    const lengthMetrics=await getRaceLengthComparison(a,b);
+
+    const lengthMetricHtml=lengthMetrics.map(metric=>{
+      const av=metric.a;
+      const bv=metric.b;
+      const valid=av!=null&&bv!=null&&av!==bv;
+      const aw=valid&&av<bv;
+      const bw=valid&&bv<av;
+
+      return `<div class="metric-row">
+        <div class="metric-value left ${aw?"winner":""}">${av==null?"—":av.toFixed(2)}</div>
+        <div class="metric-label">${metric.label}</div>
+        <div class="metric-value ${bw?"winner":""}">${bv==null?"—":bv.toFixed(2)}</div>
+      </div>`;
+    }).join("");
+
+    $("metrics").innerHTML=baseMetricHtml+lengthMetricHtml;
+
+    const ids=[String(a.driver_id),String(b.driver_id)];
+    const missing=ids.filter(id=>!compareHistories[id]);
+
+    if(missing.length){
+      const fetched=await Promise.all(
+        missing.map(id=>api("driver_race_history",`driver_id=eq.${id}&order=round_number.asc`))
+      );
+      missing.forEach((id,i)=>compareHistories[id]=fetched[i]);
+    }
+
+    const aHistory=compareHistories[String(a.driver_id)]||[];
+    const bHistory=compareHistories[String(b.driver_id)]||[];
+
+    drawComparePointsChart(a,b);
+
+    $("compareLoading").hidden=true;
+    $("comparison").hidden=false;
+  }catch(err){
+    console.error(err);
+    $("compareLoading").innerHTML='<span class="error">Could not load the complete driver comparison.</span>';
+  }
+}
+async function loadDriverProfile(driverId){
+  const d=drivers.find(x=>String(x.driver_id)===String(driverId));
+  if(!d)return;
+  $("profileLoading").hidden=false;
+  $("profileLoading").textContent="Loading driver race history from Supabase…";
+  $("profileContent").hidden=true;
+  try{
+    const history=await api("driver_race_history",`driver_id=eq.${driverId}&order=round_number.asc`);
+    $("profileCard").innerHTML=`<img src="${d.image_url||""}" alt="${fullName(d)}"><div class="profile-info">
+      <p class="eyebrow">Driver Profile</p><h2>${fullName(d)}</h2>
+      <div class="driver-meta"><span class="driver-num">#${d.driver_number}</span> · ${d.nationality||"—"} · ${d.team_name||"—"}</div>
+    </div>`;
+    const bestFinish=history.filter(x=>x.finishing_position!=null).reduce((m,x)=>Math.min(m,Number(x.finishing_position)),99);
+    const starts=history.length;
+    $("profileStats").innerHTML=[
+      ["Total Points",fmt(d.total_points)],
+      ["Wins",fmt(d.wins)],
+      ["Podiums",fmt(d.podiums)],
+      ["Avg Finish",fmt(d.avg_finish,2)],
+      ["Avg Qualifying",fmt(d.avg_qualifying,2)],
+      ["Best Finish",bestFinish===99?"—":`P${bestFinish}`],
+      ["Race Starts",starts],
+      ["Net Positions",fmt(d.net_positions_gained)],
+      ["Sprint Points",fmt(d.sprint_points)]
+    ].map(([label,value])=>`<article class="stat"><span>${label}</span><strong>${value}</strong></article>`).join("");
+    $("profileRaceBody").innerHTML=history.map(x=>`<tr>
+      <td>${x.round_number}</td><td><b>${x.race_name}</b><br><small style="color:var(--muted)">${x.circuit_country}</small></td>
+      <td>${x.team_name}</td><td class="right">${fmt(x.qualifying_position)}</td>
+      <td class="right">${fmt(x.starting_position)}</td><td class="right">${x.finishing_position==null?x.status:fmt(x.finishing_position)}</td>
+      <td class="right">${fmt(x.race_points)}</td><td class="right">${fmt(x.sprint_points)}</td>
+      <td class="right"><b>${fmt(x.weekend_points)}</b></td>
+      <td class="right">${x.positions_gained==null?"—":(Number(x.positions_gained)>0?"+":"")+fmt(x.positions_gained)}</td>
+    </tr>`).join("");
+    $("profileLoading").hidden=true;
+    $("profileContent").hidden=false;
+  }catch(err){
+    console.error(err);
+    $("profileLoading").innerHTML='<span class="error">Could not load this driver profile.</span>';
+  }
+}
+
+async function loadRace(raceId){
+  $("raceLoading").hidden=false;
+  $("raceLoading").textContent="Loading race results from Supabase…";
+  $("raceContent").hidden=true;
+  try{
+    const rows=await api("race_explorer_results",`race_id=eq.${raceId}`);
+    rows.sort((a,b)=>{
+      const ap=a.finishing_position==null?999:Number(a.finishing_position);
+      const bp=b.finishing_position==null?999:Number(b.finishing_position);
+      return ap-bp;
+    });
+    if(!rows.length)throw new Error("No race rows");
+    const r=rows[0];
+    const winner=rows.find(x=>Number(x.finishing_position)===1);
+    const pole=rows.reduce((best,x)=>Number(x.qualifying_position)<Number(best.qualifying_position)?x:best,rows[0]);
+    const sprintWinner=rows.find(x=>Number(x.sprint_finishing_position)===1);
+    $("raceTitle").innerHTML=`<p class="eyebrow">Round ${r.round_number}</p><h2>${r.race_name}</h2><p>${r.circuit_name} · ${r.circuit_country} · ${r.race_date}</p>`;
+    $("raceSummary").innerHTML=[
+      ["Winner",winner?fullName(winner):"—"],
+      ["Pole",pole?fullName(pole):"—"],
+      ["Laps",fmt(r.number_of_laps)],
+      ["Circuit Length",`${fmt(r.circuit_length_km,3)} km`],
+      ["Sprint",sprintWinner?fullName(sprintWinner):"No Sprint"],
+      ["Winner Points",winner?fmt(winner.race_points):"—"],
+      ["Winning Team",winner?.team_name||"—"],
+      ["Round",fmt(r.round_number)]
+    ].map(([label,value])=>`<article class="stat"><span>${label}</span><strong>${value}</strong></article>`).join("");
+    $("raceResultBody").innerHTML=rows.map(x=>`<tr>
+      <td class="rank">${x.finishing_position==null?"—":x.finishing_position}</td>
+      <td><div class="person"><img class="mini" src="${x.image_url||""}" alt=""><span>${fullName(x)}</span></div></td>
+      <td>${x.team_name}</td><td class="right">${fmt(x.qualifying_position)}</td>
+      <td class="right">${fmt(x.starting_position)}</td><td class="right"><b>${fmt(x.race_points)}</b></td>
+      <td><span class="pill">${x.status||"—"}</span></td>
+    </tr>`).join("");
+    $("raceLoading").hidden=true;
+    $("raceContent").hidden=false;
+  }catch(err){
+    console.error(err);
+    $("raceLoading").innerHTML='<span class="error">Could not load this race.</span>';
+  }
+}
+
+function renderStandings(){
+  if(standingsMode==="drivers"){
+    $("tableHead").innerHTML="<tr><th>Pos.</th><th>Driver</th><th>Team</th><th class='right'>Points</th><th class='right'>Wins</th><th class='right'>Podiums</th><th class='right'>Avg Finish</th></tr>";
+    $("tableBody").innerHTML=drivers.map((d,i)=>`<tr>
+      <td class="rank">${i+1}</td>
+      <td><div class="person"><img class="mini" src="${d.image_url||""}" alt=""><span>${fullName(d)}</span></div></td>
+      <td>${d.team_name||"—"}</td><td class="right"><b>${fmt(d.total_points)}</b></td>
+      <td class="right">${fmt(d.wins)}</td><td class="right">${fmt(d.podiums)}</td>
+      <td class="right">${fmt(d.avg_finish,2)}</td>
+    </tr>`).join("");
+  }else{
+    $("tableHead").innerHTML="<tr><th>Pos.</th><th>Team</th><th>Country</th><th>Engine</th><th class='right'>Points</th><th class='right'>Wins</th><th class='right'>Podiums</th></tr>";
+    $("tableBody").innerHTML=teams.map((t,i)=>`<tr>
+      <td class="rank">${i+1}</td><td><b>${t.team_name}</b></td><td>${t.country}</td><td>${t.engine_supplier}</td>
+      <td class="right"><b>${fmt(t.total_points)}</b></td><td class="right">${fmt(t.wins)}</td><td class="right">${fmt(t.podiums)}</td>
+    </tr>`).join("");
+  }
+}
+
+const chartColors=["#ff4052","#58a6ff","#f2cc60","#8bdb81","#c77dff","#ff9f43","#45d6c5","#f778ba","#9ea7ff","#d2df52"];
+
+function renderDriverPicker(){
+  const sorted=[...drivers].sort((a,b)=>fullName(a).localeCompare(fullName(b)));
+  $("driverPicker").innerHTML=sorted.map(d=>`<label class="pick-row">
+    <input type="checkbox" value="${d.driver_id}" ${selectedGraphDrivers.has(String(d.driver_id))?"checked":""}>
+    <span>${fullName(d)}</span>
+  </label>`).join("");
+  $("driverPicker").querySelectorAll("input").forEach(cb=>cb.addEventListener("change",()=>{
+    if(cb.checked){
+      if(selectedGraphDrivers.size>=5){
+        cb.checked=false;alert("Choose up to five drivers.");
+        return;
+      }
+      selectedGraphDrivers.add(cb.value);
+    }else selectedGraphDrivers.delete(cb.value);
+    drawStandingChart();
+  }));
+}
+
+function drawStandingChart(){
+  const svg=$("standingChart");
+  const selected=[...selectedGraphDrivers];
+  const W=900,H=520,L=72,R=24,T=26,B=62;
+  const plotW=W-L-R,plotH=H-T-B;
+  const maxRound=Math.max(1,...races.map(r=>Number(r.round_number)||0),...progression.map(r=>Number(r.round_number)||0));
+  const x=round=>L+((Number(round)-1)/Math.max(1,maxRound-1))*plotW;
+
+  const isPoints=graphMode==="points";
+  const maxPos=Math.max(20,...progression.map(x=>Number(x.standing_position)||0));
+  const maxPoints=Math.max(100,...progression.map(x=>Number(x.cumulative_points)||0));
+  const pointCeiling=Math.ceil(maxPoints/50)*50;
+  const y=value=>{
+    if(isPoints){
+      return T+plotH-(Number(value)/pointCeiling)*plotH;
+    }
+    return T+((Number(value)-1)/(maxPos-1))*plotH;
+  };
+
+  let out=`<rect x="0" y="0" width="${W}" height="${H}" fill="#ffffff"/>`;
+
+  if(isPoints){
+    const step=Math.max(50,Math.ceil((pointCeiling/5)/50)*50);
+    for(let value=0;value<=pointCeiling;value+=step){
+      const yy=y(value);
+      out+=`<line x1="${L}" y1="${yy}" x2="${W-R}" y2="${yy}" stroke="#e5e5e8" stroke-width="1"/>
+        <text x="${L-12}" y="${yy+4}" text-anchor="end" fill="#767a82" font-size="11">${value}</text>`;
+    }
+  }else{
+    for(let pos=1;pos<=maxPos;pos+=2){
+      const yy=y(pos);
+      out+=`<line x1="${L}" y1="${yy}" x2="${W-R}" y2="${yy}" stroke="#e5e5e8" stroke-width="1"/>
+        <text x="${L-12}" y="${yy+4}" text-anchor="end" fill="#767a82" font-size="11">P${pos}</text>`;
+    }
+  }
+
+  for(let round=1;round<=maxRound;round++){
+    const xx=x(round);
+    if(round===1||round%2===0||round===maxRound){
+      out+=`<line x1="${xx}" y1="${T}" x2="${xx}" y2="${H-B}" stroke="#f0f0f2" stroke-width="1"/>
+        <text x="${xx}" y="${H-B+23}" text-anchor="middle" fill="#767a82" font-size="10">${round}</text>`;
+    }
+  }
+
+  const axisLabel=isPoints?"Championship Points":"Standing Position";
+  out+=`<text x="${W/2}" y="${H-12}" text-anchor="middle" fill="#666a72" font-size="12">Round</text>
+    <text transform="translate(17 ${H/2}) rotate(-90)" text-anchor="middle" fill="#666a72" font-size="12">${axisLabel}</text>`;
+
+  const legend=[];
+  selected.forEach((driverId,idx)=>{
+    const rows=progression
+      .filter(x=>String(x.driver_id)===String(driverId))
+      .sort((a,b)=>a.round_number-b.round_number);
+    if(!rows.length)return;
+
+    const color=chartColors[idx%chartColors.length];
+    const valueFor=r=>isPoints?Number(r.cumulative_points):Number(r.standing_position);
+    const points=rows.map(r=>`${x(r.round_number)},${y(valueFor(r))}`).join(" ");
+
+    out+=`<polyline points="${points}" fill="none" stroke="${color}" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/>`;
+
+    rows.forEach(r=>{
+      out+=`<circle class="chart-point"
+        data-driver="${r.first_name} ${r.last_name}"
+        data-round="${r.round_number}"
+        data-race="${r.race_name}"
+        data-pos="${r.standing_position}"
+        data-points="${r.cumulative_points}"
+        cx="${x(r.round_number)}"
+        cy="${y(valueFor(r))}"
+        r="4.5"
+        fill="${color}"
+        stroke="#ffffff"
+        stroke-width="2"/>`;
+    });
+
+    legend.push(`<div class="legend-item"><span class="legend-swatch" style="background:${color}"></span>${rows[0].first_name} ${rows[0].last_name}</div>`);
+  });
+
+  if(!selected.length){    out+=`<text x="${W/2}" y="${H/2}" text-anchor="middle" fill="#80848b" font-size="15">Select drivers to compare their season progression</text>`;
+  }
+
+  svg.innerHTML=out;
+  $("chartLegend").innerHTML=legend.join("");
+  svg.setAttribute("aria-label",isPoints
+    ?"Driver cumulative championship points by round"
+    :"Driver championship standing position by round");
+
+  $("graphDescription").textContent=isPoints
+    ?"Select up to five drivers to compare cumulative championship points after every round."
+    :"Select up to five drivers. Position 1 is at the top. Tied drivers share the same position because the graph ranks cumulative championship points.";
+
+  $("positionGraphBtn").classList.toggle("active",!isPoints);
+  $("pointsGraphBtn").classList.toggle("active",isPoints);
+
+  const tip=$("chartTooltip");
+  svg.querySelectorAll(".chart-point").forEach(c=>{
+    c.addEventListener("mouseenter",()=>{
+      tip.innerHTML=`<b>${c.dataset.driver}</b><br>Round ${c.dataset.round}: ${c.dataset.race}<br>Standing: P${c.dataset.pos}<br>Championship Points: ${fmt(c.dataset.points)}`;
+      tip.style.display="block";
+    });
+    c.addEventListener("mousemove",e=>{
+      tip.style.left=`${e.clientX+14}px`;
+      tip.style.top=`${e.clientY+14}px`;
+    });
+    c.addEventListener("mouseleave",()=>tip.style.display="none");
+  });
+}
+async function init(){
+  try{
+    [drivers,teams,races,progression]=await Promise.all([
+      api("driver_season_stats","select=*&order=total_points.desc,wins.desc,last_name.asc"),
+      api("team_season_stats","select=*&order=total_points.desc,wins.desc,team_name.asc"),
+      api("races","select=race_id,round_number,race_name,race_date&order=round_number.asc"),
+      api("driver_championship_progression","select=*&order=round_number.asc,standing_position.asc")
+    ]);
+    setConnection(true);
+
+
+    populateDriverSelect($("driverOne"));
+    populateDriverSelect($("driverTwo"));
+    populateDriverSelect($("profileDriver"));
+
+    const norris=drivers.find(d=>d.last_name==="Norris");
+    const verstappen=drivers.find(d=>d.last_name==="Verstappen");
+    const piastri=drivers.find(d=>d.last_name==="Piastri");
+    $("driverOne").value=norris?.driver_id||drivers[0]?.driver_id;
+    $("driverTwo").value=verstappen?.driver_id||drivers[1]?.driver_id;
+    $("profileDriver").value=norris?.driver_id||drivers[0]?.driver_id;
+    renderComparison();
+    loadDriverProfile($("profileDriver").value);
+
+    $("raceSelect").innerHTML=races.map(r=>`<option value="${r.race_id}">Round ${r.round_number} — ${r.race_name}</option>`).join("");
+    if(races.length)loadRace(races[0].race_id);
+
+    [norris,verstappen,piastri].filter(Boolean).forEach(d=>selectedGraphDrivers.add(String(d.driver_id)));
+    renderDriverPicker();
+    drawStandingChart();
+    renderStandings();
+
+    const initial=location.hash.replace("#","")||"overview";
+    if(["overview","compare","drivers","races","graph","standings"].includes(initial))showPage(initial);
+  }catch(err){
+    console.error(err);setConnection(false);
+    document.querySelectorAll(".state").forEach(el=>el.innerHTML='<span class="error">Could not load live Supabase data.</span>');
+  }
+}
+
+$("driverOne").addEventListener("change",renderComparison);
+$("driverTwo").addEventListener("change",renderComparison);
+$("profileDriver").addEventListener("change",()=>loadDriverProfile($("profileDriver").value));
+$("raceSelect").addEventListener("change",()=>loadRace($("raceSelect").value));
+
+$("driverTab").addEventListener("click",()=>{
+  standingsMode="drivers";$("driverTab").classList.add("active");$("teamTab").classList.remove("active");renderStandings();
+});
+$("teamTab").addEventListener("click",()=>{
+  standingsMode="teams";$("teamTab").classList.add("active");$("driverTab").classList.remove("active");renderStandings();
+});
+
+$("positionGraphBtn").addEventListener("click",()=>{
+  graphMode="position";
+  drawStandingChart();
+});
+$("pointsGraphBtn").addEventListener("click",()=>{
+  graphMode="points";
+  drawStandingChart();
+});
+
+$("top3Btn").addEventListener("click",()=>{
+  selectedGraphDrivers.clear();
+  drivers.slice(0,3).forEach(d=>selectedGraphDrivers.add(String(d.driver_id)));
+  renderDriverPicker();drawStandingChart();
+});
+$("clearGraphBtn").addEventListener("click",()=>{
+  selectedGraphDrivers.clear();renderDriverPicker();drawStandingChart();
+});
+
+window.addEventListener("hashchange",()=>{
+  const name=location.hash.replace("#","");
+  if(["overview","compare","drivers","races","graph","standings"].includes(name)){
+    document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id===`page-${name}`));
+    document.querySelectorAll(".navbtn").forEach(b=>b.classList.toggle("active",b.dataset.page===name));
+  }
+});
+
+init();
+</script>
 </body>
 </html>
